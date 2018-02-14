@@ -103,17 +103,16 @@
     </android.support.constraint.ConstraintLayout>
 
 
-    <EditText
-        android:id="@+id/note_textarea"
+    <Button
+        android:id="@+id/note_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:inputType="textMultiLine"
         android:hint="@string/task_note_hint"
         android:minHeight="200dp"
         android:background="@drawable/cell_textarea"
         app:layout_constraintTop_toBottomOf="@id/remind_layout"
-        style="@style/EditText"/>
+        style="@style/ButtonLikeEditText"/>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

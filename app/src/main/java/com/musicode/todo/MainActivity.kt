@@ -2,10 +2,12 @@ package com.musicode.todo
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Paint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import kotlinx.android.synthetic.main.activity_note_form.*
 import kotlinx.android.synthetic.main.fragment_task_form.*
 import org.jetbrains.anko.contentView
 import java.text.SimpleDateFormat
@@ -17,7 +19,11 @@ class MainActivity : AppCompatActivity() {
 
     private var remindDate: Calendar? = null
 
+    private var note: String = ""
+
     private lateinit var inputMethodManager: InputMethodManager
+
+    private val REQUEST_CODE_NOTE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +51,22 @@ class MainActivity : AppCompatActivity() {
             if (inputMethodManager.isActive && view != null) {
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
             }
+        }
+
+        note_button.setOnClickListener {
+
+            if (name_input.isActivated) {
+                name_input.clearFocus()
+            }
+
+            val bundle = Bundle()
+            bundle.putString("value", note)
+
+            val intent = Intent(this, NoteFormActivity::class.java)
+            intent.putExtras(bundle)
+
+            startActivityForResult(intent, REQUEST_CODE_NOTE)
+
         }
         done_checkbox.setOnClickListener {
             setDone(!done)
@@ -75,4 +97,15 @@ class MainActivity : AppCompatActivity() {
         end_date_button.text = string
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_CODE_NOTE -> {
+                if (resultCode === RESULT_OK && data != null) {
+                    note = data.extras.getString("value")
+                    note_button.setText(note)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }
