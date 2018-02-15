@@ -18,6 +18,8 @@
         </activity>
         <activity android:name=".NoteFormActivity">
         </activity>
+        <activity android:name=".TaskFormActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -1,111 +1,74 @@
 package com.musicode.todo
 
-import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
-import android.graphics.Paint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
-import kotlinx.android.synthetic.main.activity_note_form.*
-import kotlinx.android.synthetic.main.fragment_task_form.*
-import org.jetbrains.anko.contentView
-import java.text.SimpleDateFormat
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
+import com.musicode.todo.data.Repository
+import com.musicode.todo.model.Task
+import com.musicode.todo.ui.TaskListAdapter
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var done = false
-
-    private var remindDate: Calendar? = null
-
-    private var note: String = ""
-
-    private lateinit var inputMethodManager: InputMethodManager
-
-    private val REQUEST_CODE_NOTE = 1
+    private val REQUEST_CODE_TASK_FORM: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_task_form)
+        setContentView(R.layout.activity_main)
 
-        inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        Repository.addTask(Task(1, "1", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(2, "2", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(3, "3", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(4, "4", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(5, "5", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(6, "6", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(7, "7", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(8, "8", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(9, "9", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(10, "10", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(11, "11", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(12, "12", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(13, "13", false, Date(), Date(), "", Date(), Date()))
+        Repository.addTask(Task(14, "14", false, Date(), Date(), "", Date(), Date()))
 
-        end_date_button.setOnClickListener {
-            var date = remindDate
-            if (date == null) {
-                date = Calendar.getInstance()
-            }
-            DatePickerDialog(
-                    this,
-                    DatePickerDialog.OnDateSetListener { datePicker, year, month, date ->
-                        setRemindDate(year, month, date)
-                    },
-                    date!!.get(Calendar.YEAR),
-                    date!!.get(Calendar.MONTH),
-                    date!!.get(Calendar.DATE)
-            ).show()
+        initToolbar()
 
+        initRecycleView()
 
-            val view = contentView
-            if (inputMethodManager.isActive && view != null) {
-                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-            }
-        }
+    }
 
-        note_button.setOnClickListener {
+    private fun initToolbar() {
 
-            if (name_input.isActivated) {
-                name_input.clearFocus()
-            }
+        setSupportActionBar(tool_bar)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    }
+
+    private fun initRecycleView() {
+
+        task_list.adapter = TaskListAdapter(Repository.tasks) {
             val bundle = Bundle()
-            bundle.putString("value", note)
+            bundle.putLong("taskId", it.id)
 
-            val intent = Intent(this, NoteFormActivity::class.java)
+            val intent = Intent(this, TaskFormActivity::class.java)
             intent.putExtras(bundle)
 
-            startActivityForResult(intent, REQUEST_CODE_NOTE)
+            startActivityForResult(intent, REQUEST_CODE_TASK_FORM)
+        }
 
-        }
-        done_checkbox.setOnClickListener {
-            setDone(!done)
-        }
+        task_list.layoutManager = LinearLayoutManager(this)
+
+        val divider = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        divider.setDrawable(ContextCompat.getDrawable(this, R.drawable.task_list_divider))
+
+        task_list.addItemDecoration(divider)
+
     }
 
-
-    fun setDone(done: Boolean) {
-        if (done) {
-            name_input.paintFlags = name_input.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            done_checkbox.setImageResource(R.drawable.ic_radio_button_checked_black_24dp)
-        }
-        else {
-            name_input.paintFlags = name_input.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-            done_checkbox.setImageResource(R.drawable.ic_radio_button_unchecked_black_24dp)
-        }
-        this.done = done
-    }
-
-    fun setRemindDate(year: Int, month: Int, date: Int) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-        if (remindDate == null) {
-            remindDate = Calendar.getInstance()
-        }
-        remindDate?.set(year, month, date)
-
-        val string = formatter.format(remindDate?.time)
-        end_date_button.text = string
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_CODE_NOTE -> {
-                if (resultCode === RESULT_OK && data != null) {
-                    note = data.extras.getString("value")
-                    note_button.setText(note)
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
 }
