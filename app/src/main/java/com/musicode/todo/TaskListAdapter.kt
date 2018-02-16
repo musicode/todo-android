@@ -1,10 +1,9 @@
-package com.musicode.todo.ui
+package com.musicode.todo
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.musicode.todo.R
 import com.musicode.todo.model.Task
 import kotlinx.android.synthetic.main.task_item.view.*
 

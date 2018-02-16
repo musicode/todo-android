@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.musicode.todo.data.Repository
+import com.musicode.todo.model.Task
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,6 +19,8 @@ class TaskFormActivity : AppCompatActivity() {
     private val REQUEST_CODE_NOTE = 1
 
     private var taskId: Long? = null
+
+    private var task: Task? = null
 
     /**
      * 是否已标记完成
@@ -98,6 +102,7 @@ class TaskFormActivity : AppCompatActivity() {
 
         done_checkbox.setOnClickListener {
             setDone(!isDone)
+            updateStatus()
         }
     }
 
@@ -113,6 +118,7 @@ class TaskFormActivity : AppCompatActivity() {
                     name_input.setText(task.name)
                     note_button.setText(task.note)
                     setDone(task.isDone)
+                    updateStatus()
                     val remindTime = task.remindTime
                     if (remindTime != null) {
                         setRemindTime(remindTime.year, remindTime.month, remindTime.date)
@@ -121,9 +127,12 @@ class TaskFormActivity : AppCompatActivity() {
                     if (endTime != null) {
                         setEndTime(endTime.year, endTime.month, endTime.date)
                     }
+                    return
                 }
             }
         }
+        setDone(isDone)
+        updateStatus()
     }
 
     private fun initToolbar() {
@@ -146,22 +155,43 @@ class TaskFormActivity : AppCompatActivity() {
         this.isDone = done
     }
 
+    fun updateStatus() {
+        val id = taskId
+        if (id != null) {
+            val task = Repository.findTask(id)
+            if (task != null) {
+                val doneTime = task.doneTime
+                if (task.isDone && doneTime != null) {
+                    status_text.text = "完成于：" + formatTime(doneTime)
+                }
+                else {
+                    status_text.text = "创建于：" + formatTime(task.createTime)
+                }
+                return
+            }
+        }
+        status_bar.visibility = View.GONE
+    }
+
+    fun formatTime(date: Date): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:MM", Locale.CHINA)
+        return formatter.format(date)
+    }
+
     fun setRemindTime(year: Int, month: Int, date: Int) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
         val calendar = remindTime ?: Calendar.getInstance()
         calendar.set(year, month, date)
 
         remindTime = calendar
-        remind_time_button.text = formatter.format(calendar.time)
+        remind_time_button.text = formatTime(calendar.time)
     }
 
     fun setEndTime(year: Int, month: Int, date: Int) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
         val calendar = endTime ?: Calendar.getInstance()
         calendar.set(year, month, date)
 
         endTime = calendar
-        end_time_button.text = formatter.format(calendar.time)
+        end_time_button.text = formatTime(calendar.time)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

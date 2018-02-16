@@ -10,5 +10,5 @@ data class Task(
         var endTime: Date?,
         var note: String,
         var createTime: Date,
-        var doneTime: Date
+        var doneTime: Date?
 )

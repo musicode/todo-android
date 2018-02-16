@@ -7,6 +7,13 @@ object Repository {
 
     val tasks: ArrayList<Task> = ArrayList<Task>()
 
+    var id: Long = 0
+
+    fun generateId(): Long {
+        id += 1
+        return id
+    }
+
     fun addTask(task: Task) {
         tasks.add(task)
     }

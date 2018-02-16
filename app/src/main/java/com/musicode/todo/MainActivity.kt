@@ -8,7 +8,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import com.musicode.todo.data.Repository
 import com.musicode.todo.model.Task
-import com.musicode.todo.ui.TaskListAdapter
+import com.musicode.todo.TaskListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
